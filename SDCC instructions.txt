@@ -1,0 +1,55 @@
+xlcd2.h:
+
+remove PARAM_SCLASS(macro definition of 'auto' storage class) where ever you see it, SDCC doesnt use 'auto', it will treat all non const variables as 'auto'. The same principle follows with 'rom const' remove 'rom const' in paramater declarations for functions
+
+headerfiles:
+main c file and openxlcd
+replace #include<delays.h>, with the name of SDCC delay header <delay.h> 
+
+all c files
+replace #include<p18cxxx.h> with the SDCC platform specific header #include<pic18f452.h>
+
+ATTEMPT TO BUILD THE PROJECT TO GENERATE OBJECT FILES FOR MAIN AND XLCD FUNCTIONS!!
+I RECCOMEND THAT YOU DOWNLOAD THIS: https://www.voidtools.com/downloads/ [an application called Everything]
+will make finding files very easy
+
+find SDCC assembly delay functions... because there us no C code for them, therefore you cant generate object code and MPLABX will say that the label delayxxtyc does not exist (if you downloaded the modified version of SDCC that gives extra info, I forgot where -_-  ).
+
+	delay1ktcy.S
+	delay10ktcy.S
+	delay10tcy.S (used to create 20 clock cycle delay[18])
+C:\Program Files\SDCC\lib\src\pic16\libc\delay\
+
+you will need to copy those files to you project directory and change the file extention to .asm
+open them and replace 'include <p18fxxx.inc>' with 'include <p18f452.inc>'
+
+Compiling assembly to object files:
+open command prompt and navigate to the directory with your asm files and do this for each file (commnad line)
+
+dir command - lists directories
+cd [directory] enters [directory]
+
+type gpasm.exe and press enter
+then type
+gpasm -p18f452 -c delay10ktcy.asm
+and enter
+
+if this is successful the delay10ktcy.o file and a delay10ktyc.lst file will appear in your directory in windows explorer
+do this for the rest if the assembly files
+
+linking object files with SDCC:
+this can be tricky... but you need to navigate to the place where MPLABX outputs the object files for your project(or use Everything (the app i told you to download earlier i.e search something like openxlcd.o - if you need to produce object code for all c files )
+
+now copy the delay function object files to that directory.
+
+close and reopen command prompt and navigate to the object file folder
+
+C:\Users\Luther Jn. Baptiste\Google Drive\ECNG 3006\L01_815117459\build\default\production\_ext\1508825183>"C:\Program Files\SDCC\bin\sdcc.exe" -Wl-c -Wl-m --use-non-free <<-I"../../../../../Program Files (x86)/Microchip/mplabc18/v3.47/h">> -mpic16 -p18f452 lab1lcd.o busyxlcd.o openxlcd.o putrxlcd.o putsxlcd.o readaddr.o readdata.o setcgram.o setddram.o wcmdxlcd.o writdata.o delay10tcy.o delay10ktcy.o delay1ktcy.o -o "C:\Users\Luther Jn. Baptiste\Google Drive\ECNG 3006\L01_815117459\dist\default\production\L01_815117459_SDCC.hex"
+
+you can(should) ommit the part between the << >> 
+
+what we are doing here is manually linking the object files... the last directory after -o is the output directory for your hex file (replace ir with your output directory).
+
+use MPLAB to download the hex file to the PIC
+
+
