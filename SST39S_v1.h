@@ -107,5 +107,5 @@ volatile union uCHAR{
 };
 extern union uCHAR RXbits;
 extern union uCHAR TXbitsADDR;
-extern union uCHAR TXbitsDATA;
+extern union uCHAR TXbitsDATA;// for bitwise transfer of data without explicit bit shifting of addresses, use unions for bytewise loading of floats and ints.
 #endif
